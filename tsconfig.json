@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "dist",
+    "strict": true,
+    "module": "es2022",
+    "target": "esnext",
+    "lib": ["esnext"],
+    "esModuleInterop": true,
+    "moduleResolution": "node"
+  }
+}
