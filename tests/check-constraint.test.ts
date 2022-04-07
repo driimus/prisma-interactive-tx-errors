@@ -26,7 +26,9 @@ describe("check constraint errors should be thrown", () => {
           viewCount: -1, // should fail, must be >= 0
         },
       })
-    ).rejects.toThrowError("CHECK constraint failed: viewCount >= 0");
+    ).rejects.toThrowError(
+      'violates check constraint \\"Post_viewCount_check\\"'
+    );
   });
 
   test("inside transaction writes", async () => {
@@ -47,16 +49,11 @@ describe("check constraint errors should be thrown", () => {
           },
         }),
       ])
-    ).rejects.toThrowError("CHECK constraint failed: viewCount >= 0");
+    ).rejects.toThrowError(
+      'violates check constraint \\"Post_viewCount_check\\"'
+    );
   });
   test("inside interactive transactions", async () => {
-    const user = await prisma.user.create({
-      data: {
-        email: faker.internet.email(),
-        name: faker.name.firstName(),
-      },
-    });
-
     await expect(
       prisma.$transaction(async (client) => {
         const user = await client.user.create({
@@ -66,14 +63,18 @@ describe("check constraint errors should be thrown", () => {
           },
         });
 
-        return client.post.create({
+        const post = await client.post.create({
           data: {
             authorId: user.id,
             title: faker.lorem.sentence(),
             viewCount: -1, // should fail, must be >= 0
           },
         });
+
+        return post;
       })
-    ).rejects.toThrowError("CHECK constraint failed: viewCount >= 0");
+    ).rejects.toThrowError(
+      'violates check constraint \\"Post_viewCount_check\\"'
+    );
   });
 });
