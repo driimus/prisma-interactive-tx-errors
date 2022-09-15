@@ -21,7 +21,7 @@ pnpm i
 3. Apply migrations and run the tests
 
 ```sh
-pnpm prisma migrate reset --schema ./schema-binary.prisma
+pnpm prisma migrate reset --schema ./prisma/schema-binary.prisma
 pnpm test
 ```
 
@@ -35,4 +35,15 @@ Received:
 
 ```
  ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(Error { kind: Db, cause: Some(DbError { severity: \"ERROR\", parsed_severity: Some(Error), code: SqlState(\"25P02\"), message: \"current transaction is aborted, commands ignored until end of transaction block\", detail: None, hint: None, position: None, where_: None, schema: None, table: None, column: None, datatype: None, constraint: None, file: Some(\"postgres.c\"), line: Some(1718), routine: Some(\"exec_bind_message\") }) }) })"
+```
+
+
+## Quickly test library and binrary engine after another
+
+```
+docker compose up
+pnpm i
+pnpm prisma migrate reset --schema ./prisma/schema-binary.prisma
+pnpm prisma generate --schema ./prisma/schema-library.prisma && pnpm test
+pnpm prisma generate --schema ./prisma/schema-binary.prisma && pnpm test
 ```
